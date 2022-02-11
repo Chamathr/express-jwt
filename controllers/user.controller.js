@@ -12,7 +12,7 @@ exports.allUsers = async (req, res, next) => {
     res.send(allUsers)
   }
   catch(error){
-    res.status(500).json({error})
+    res.status(500).send({error})
   }
 }
 
@@ -36,7 +36,6 @@ exports.signinUsers = async (req, res, next) => {
         const token = jwt.sign({ name: user.name }, conf.secret, {
           expiresIn: conf.time 
         });
-        console.log(token);
         res.send(`succesfully logged in... ${token}`)
       }
     }
@@ -44,7 +43,7 @@ exports.signinUsers = async (req, res, next) => {
   }
   catch(error){
     console.log(error);
-    res.status(500).json({error})
+    res.status(500).send({error})
   }
 }
 
@@ -59,7 +58,7 @@ exports.addUsers = async (req, res, next) => {
     res.send('successfully created')
   }
   catch(error){
-    res.status(500).json({ error });
+    res.status(500).send({ error });
   }
 }
 
@@ -67,7 +66,7 @@ exports.updateUsers = async (req, res, next) => {
   try{
     await prisma.test_1.update(
       {
-        where: {id: parseInt(req.params.id)},
+        where: {name: req.params.name},
         data: {
           name: req.body.name
         }
@@ -76,7 +75,7 @@ exports.updateUsers = async (req, res, next) => {
     res.send("successfully updated")
   }
   catch(error){
-    res.status(500).json({error})
+    res.status(500).send({error})
   }
 }
 
@@ -84,13 +83,13 @@ exports.deleteUsers = async (req, res, next) => {
   try{
     await prisma.test_1.delete(
       {
-        where: {id: parseInt(req.params.id)}
+        where: {name: req.params.name}
       }
     )
     res.send("successfully deleted")
   }
   catch(error){
-    res.status(500).json({error})
+    res.status(500).send({error})
   }
 
 }
