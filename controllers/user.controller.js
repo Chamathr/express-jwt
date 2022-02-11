@@ -55,19 +55,33 @@ exports.signinUsers = async (req, res, next) => {
 }
 
 exports.addUsers = async (req, res, next) => {
-  try{
-    await prisma.users.create({
-      data: {
-        name: req.body.name,
-        password: bcrypt.hashSync(req.body.password, 8),
-        role: req.body.role
+    try{
+      const userExists = await prisma.users.findUnique({
+        where: {
+          name: req.body.name
+        }
+      })
+      if(userExists){
+        return res.send({message: "user already exits"})
+      }else{
+        try{
+          await prisma.users.create({
+            data: {
+              name: req.body.name,
+              password: bcrypt.hashSync(req.body.password, 8),
+              role: req.body.role
+            }
+          })
+          res.send('successfully created')
+        }
+        catch(error){
+          res.status(500).send({ error });
+        }
       }
-    })
-    res.send('successfully created')
-  }
-  catch(error){
-    res.status(500).send({ error });
-  }
+    }
+    catch(error){
+      res.status(401).send({error})
+    }
 }
 
 exports.updateUsers = async (req, res, next) => {
