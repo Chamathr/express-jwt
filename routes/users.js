@@ -6,7 +6,7 @@ const authJwt = require("../middleware/authJwt");
 router.get('/', [authJwt.authenticateToken], userController.allUsers);
 router.post('/signup/', userController.addUsers);
 router.post('/signin/', userController.signinUsers)
-router.put('/:id', userController.updateUsers);
-router.delete('/:id', userController.deleteUsers);
+router.put('/:name', [authJwt.authenticateToken], [authJwt.authenticateUserRole], userController.updateUsers);
+router.delete('/:name', [authJwt.authenticateToken], [authJwt.authenticateUserRole], userController.deleteUsers);
 
 module.exports = router;
