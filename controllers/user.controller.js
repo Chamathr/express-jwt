@@ -8,7 +8,7 @@ const { config } = require('nodemon');
 
 exports.allUsers = async (req, res, next) => {
   try{
-    const allUsers = await prisma.test_1.findMany();
+    const allUsers = await prisma.users.findMany();
     res.send(allUsers)
   }
   catch(error){
@@ -18,7 +18,7 @@ exports.allUsers = async (req, res, next) => {
 
 exports.signinUsers = async (req, res, next) => {
   try{
-    const user = await prisma.test_1.findUnique({
+    const user = await prisma.users.findUnique({
       where: {
         name: req.body.name
       }
@@ -33,7 +33,15 @@ exports.signinUsers = async (req, res, next) => {
       if(!passwordIsValid){
         res.send("Invalid password")
       }else{
-        const token = jwt.sign({ name: user.name }, conf.secret, {
+        const role = await prisma.users.findUnique({
+          where: {
+            name: req.body.name
+          },
+          select: {
+            role: true
+          }
+        })
+        const token = jwt.sign({ name: user.name, userRole: role.role }, conf.secret, {
           expiresIn: conf.time 
         });
         res.send(`succesfully logged in... ${token}`)
@@ -42,17 +50,17 @@ exports.signinUsers = async (req, res, next) => {
 
   }
   catch(error){
-    console.log(error);
     res.status(500).send({error})
   }
 }
 
 exports.addUsers = async (req, res, next) => {
   try{
-    await prisma.test_1.create({
+    await prisma.users.create({
       data: {
         name: req.body.name,
-        password: bcrypt.hashSync(req.body.password, 8)
+        password: bcrypt.hashSync(req.body.password, 8),
+        role: req.body.role
       }
     })
     res.send('successfully created')
@@ -64,7 +72,7 @@ exports.addUsers = async (req, res, next) => {
 
 exports.updateUsers = async (req, res, next) => {
   try{
-    await prisma.test_1.update(
+    await prisma.users.update(
       {
         where: {name: req.params.name},
         data: {
@@ -81,7 +89,7 @@ exports.updateUsers = async (req, res, next) => {
 
 exports.deleteUsers = async (req, res, next) => {
   try{
-    await prisma.test_1.delete(
+    await prisma.users.delete(
       {
         where: {name: req.params.name}
       }

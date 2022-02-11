@@ -7,8 +7,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model test_1 {
+model users {
   id       Int    @id @default(autoincrement())
   name     String @unique(map: "name_UNIQUE") @db.VarChar(255)
   password String @db.VarChar(255)
+  role     String @db.VarChar(255)
 }
