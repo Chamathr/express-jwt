@@ -55,3 +55,28 @@ exports.deleteMyProfile = async (req, res, next) => {
         }
     })
   }
+
+  exports.getMyProfile = async (req, res, next) => {
+    const token = req.headers["authorization"];
+    jwt.verify(token, conf.secret, async (err, decoded) => {
+      if(err){
+          return res.status(401).send({message: "Unauthorized"})
+      }else{
+          try{
+              const details = await prisma.users.findUnique(
+                  {
+                      where: {name: decoded.name},
+                      select: {
+                        name: true,
+                        role: true
+                      }
+                  }
+              )
+              res.send(details)
+          }
+          catch(error){
+              res.status(500).send({error})
+          }
+      }
+  })
+  }

@@ -5,6 +5,7 @@ const authJwt = require("../middleware/authJwt");
 
 router.delete('/', profileController.deleteMyProfile)
 router.put('/', profileController.updateMyProfile)
+router.get('/', profileController.getMyProfile)
 
 
 module.exports = router;
