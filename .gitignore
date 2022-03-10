@@ -1,3 +1,4 @@
 node_modules
 .vscode
+.idea
 # Keep environment variables out of version control
